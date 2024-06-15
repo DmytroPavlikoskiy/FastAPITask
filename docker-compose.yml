@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: userdb123321
+      POSTGRES_PASSWORD: password1233211
+      POSTGRES_DB: fastapi_db
+    volumes:
+      - ./alembic/dump/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    ports:
+      - "5432:5432"
+
+  web:
+    build: .
+    command: sh -c "sleep 10 && uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    links:
+      - db
